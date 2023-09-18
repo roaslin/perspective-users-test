@@ -1,20 +1,17 @@
 import express, { Express, Request, Response } from 'express';
 import * as dotenv from 'dotenv';
 import cors from 'cors';
-import UsersService from './UsersService';
+import UsersService, { NewUserCommand } from './UsersService';
+import UsersRepository from './usersRepository';
 
 dotenv.config();
 
 const app: Express = express();
 
-const usersService: UsersService = new UsersService();
+const usersRepository: UsersRepository = new UsersRepository();
+const usersService: UsersService = new UsersService(usersRepository);
 
 app.use(cors()).use(express.json()).options('*', cors());
-
-export interface NewUserCommand {
-    name: String;
-    email: String;
-}
 
 app.post('/users', async (req: Request, res: Response) => {
     const newUserRequest: NewUserCommand = req.body;
