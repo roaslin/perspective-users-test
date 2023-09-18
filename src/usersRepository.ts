@@ -1,9 +1,8 @@
-import { NewUserCommand, User } from "./UsersService";
+import { NewUserCommand, User } from './UsersService';
 
 export default class UsersRepository {
-  constructor() {}
-    store(newUserCommand: NewUserCommand): String | User  {
-      throw new Error('Method not implemented.');
+    constructor() {}
+    store(newUserCommand: NewUserCommand): String | User {
+        return 'error';
     }
-
 }
