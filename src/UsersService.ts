@@ -18,7 +18,7 @@ export default class UsersService {
         this.usersRepository = usersRepository;
     }
 
-    create(newUserCommand: NewUserCommand): String | User {
+    async create(newUserCommand: NewUserCommand): Promise<String | User> {
         return this.usersRepository.store(newUserCommand);
     }
 }

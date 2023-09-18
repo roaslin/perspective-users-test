@@ -3,9 +3,9 @@ import UsersService, { NewUserCommand, User } from '../src/UsersService';
 import UsersRepository from '../src/usersRepository';
 
 describe('UsersService should', () => {
-    test('return error message when cannot create a new user', () => {
+    test('return error message when cannot create a new user', async () => {
         const usersRepository: UsersRepository = {
-            store(newUserCommand: NewUserCommand): String | User {
+            store: (newUserCommand: NewUserCommand) => {
                 return 'error';
             },
         };
@@ -15,13 +15,13 @@ describe('UsersService should', () => {
             email: 'raul.test@test.com',
         };
 
-        const result = usersService.create(newUserCommand);
+        const result = await usersService.create(newUserCommand);
         expect(result).toBe('error');
     });
 
-    test('return a new created user', () => {
+    test('return a new created user', async () => {
         const usersRepository: UsersRepository = {
-            store(newUserCommand: NewUserCommand) {
+            store: (newUserCommand: NewUserCommand) => {
                 return {
                     id: '12345',
                     name: 'Raul Mordillo LLuva',
@@ -37,7 +37,7 @@ describe('UsersService should', () => {
             email: 'raul.test@test.com',
         };
 
-        const result = usersService.create(newUserCommand);
+        const result = await usersService.create(newUserCommand);
 
         const expectedResult: User = {
             id: '12345',
