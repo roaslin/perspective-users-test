@@ -20,7 +20,7 @@ interface NewUserDTO {
     id: string;
     name: string;
     email: string;
-    creationDate: string;
+    creationDate: Date;
 }
 
 app.use(cors()).use(express.json()).options('*', cors());
@@ -36,7 +36,7 @@ app.post('/users', async (req: Request, res: Response) => {
     if (typeof result === 'string') {
         res.send({ message: result }).status(200);
     } else {
-        const dto = {
+        const dto: NewUserDTO = {
             id: result.id,
             name: result.name,
             email: result.email,
