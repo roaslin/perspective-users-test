@@ -1,8 +1,8 @@
 import { v4 as uuidv4 } from 'uuid';
 import { describe, expect, test } from '@jest/globals';
-import UsersService, { NewUser, User } from '../src/UsersService';
-import IUsersRepository from '../src/IUsersRepository';
-import UserModel from '../src/UserModel';
+import UsersService, { NewUser, User } from '../src/services/UsersService';
+import IUsersRepository from '../src/repositories/IUsersRepository';
+import UserModel from '../src/models/UserModel';
 
 describe('UsersService should', () => {
     test('return error message when cannot create a new user', async () => {

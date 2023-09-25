@@ -1,4 +1,4 @@
-import IUsersRepository from './IUsersRepository';
+import IUsersRepository from '../repositories/IUsersRepository';
 
 export type Id = string;
 export type Name = string;
@@ -28,7 +28,7 @@ export default class UsersService {
             return await this._usersRepository.store(newUser);
         } catch (error) {
             console.log(error);
-            return 'error';
+            throw error;
         }
     }
 
@@ -37,16 +37,19 @@ export default class UsersService {
             const result = await this._usersRepository.getAll();
 
             if (created === 'desc') {
+                // sorting by descending date
                 return result.sort(
                     (a: User, b: User) => b.creationDate.getTime() - a.creationDate.getTime(),
                 );
             }
 
+            // sorting by ascending date
             return result.sort(
                 (a: User, b: User) => a.creationDate.getTime() - b.creationDate.getTime(),
             );
         } catch (error) {
             console.log(error);
+            throw error;
         }
     }
 }

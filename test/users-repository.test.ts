@@ -1,12 +1,12 @@
 import { v4 as uuidv4 } from 'uuid';
 import { describe, expect, test } from '@jest/globals';
-import { NewUser } from '../src/UsersService';
-import InMemoryUsersRepository from '../src/InMemoryUsersRepository';
-import IUsersRepository from '../src/IUsersRepository';
-import IIdProvider from '../src/IIdProvider';
-import Clock from '../src/Clock';
-import UserModel from '../src/UserModel';
-import UUIDV4IdProvider from '../src/UUIDV4IdProvider';
+import { NewUser } from '../src/services/UsersService';
+import InMemoryUsersRepository from '../src/repositories/in-memory/InMemoryUsersRepository';
+import IUsersRepository from '../src/repositories/IUsersRepository';
+import IIdProvider from '../src/providers/IIdProvider';
+import Clock from '../src/shared/Clock';
+import UserModel from '../src/models/UserModel';
+import UUIDV4IdProvider from '../src/providers/UUIDV4IdProvider';
 
 describe('UsersRepository should', () => {
     test('return "error" when cannot store a new user', async () => {
@@ -31,7 +31,7 @@ describe('UsersRepository should', () => {
         expect(result).toBe('error-persisting-user');
     });
 
-    test('return a new user when can persist it', async () => {
+    test('return a new user when can store it', async () => {
         const clock: Clock = {
             today: (): Date => {
                 return new Date(2023, 8, 25);
@@ -71,7 +71,7 @@ describe('UsersRepository should', () => {
         );
         await usersRepository.store(buildUser('Raul', 'raul@test.com'));
         await usersRepository.store(buildUser('Servus', 'servus@test.com'));
-        
+
         const result = await usersRepository.getAll();
 
         expect(result.length).toBe(2);

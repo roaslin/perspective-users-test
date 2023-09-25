@@ -1,8 +1,8 @@
-import Clock from './Clock';
-import IIdProvider from './IIdProvider';
-import IUsersRepository from './IUsersRepository';
-import UserModel from './UserModel';
-import { NewUser, User } from './UsersService';
+import Clock from '../../shared/Clock';
+import IIdProvider from '../../providers/IIdProvider';
+import IUsersRepository from '../IUsersRepository';
+import UserModel from '../../models/UserModel';
+import { NewUser, User } from '../../services/UsersService';
 
 export default class InMemoryUsersRepository implements IUsersRepository {
     private idProvider: IIdProvider;
@@ -48,6 +48,7 @@ export default class InMemoryUsersRepository implements IUsersRepository {
             return mappedUsers;
         } catch (error) {
             console.log(error);
+            throw error;
         }
     }
 }
