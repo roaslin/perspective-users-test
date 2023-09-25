@@ -46,7 +46,12 @@ app.post('/users', async (req: Request, res: Response) => {
         return res.send(dto);
     }
 });
-app.get('/users', (req: Request, res: Response) => {
+app.get('/users', async (req: Request, res: Response) => {
+
+    const result = await usersService.getAll();
+
+
+
     res.send([]).status(200);
 });
 

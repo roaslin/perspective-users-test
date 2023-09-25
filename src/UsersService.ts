@@ -27,4 +27,22 @@ export default class UsersService {
             return 'error';
         }
     }
+
+    async getAll(created = 'desc'): Promise<Array<User>> {
+        try {
+            const result = await this._usersRepository.getAll(created);
+
+            if (created === 'desc') {
+                return result.sort(
+                    (a: User, b: User) => b.creationDate.getTime() - a.creationDate.getTime(),
+                );
+            }
+
+            return result.sort(
+                (a: User, b: User) => a.creationDate.getTime() - b.creationDate.getTime(),
+            );
+        } catch (error) {
+            console.log(error);
+        }
+    }
 }

@@ -34,4 +34,8 @@ export default class InMemoryUsersRepository implements IUsersRepository {
             return 'error-persisting-user';
         }
     }
+
+    async getAll(created: string): Promise<User[]> {
+        throw new Error('Method not implemented.');
+    }
 }
