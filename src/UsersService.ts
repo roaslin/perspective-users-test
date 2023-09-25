@@ -1,24 +1,30 @@
-import UsersRepository from './usersRepository';
+import IUsersRepository from './IUsersRepository';
 
-export interface NewUserCommand {
-    name: String;
-    email: String;
+export interface NewUser {
+    name: string;
+    email: string;
 }
 
 export interface User {
-    id: String;
-    name: String;
-    email: String;
-    creationDate: String;
+    id: string;
+    name: string;
+    email: string;
+    creationDate: Date;
 }
 
 export default class UsersService {
-    usersRepository: UsersRepository;
-    constructor(usersRepository: UsersRepository) {
-        this.usersRepository = usersRepository;
+    private _usersRepository: IUsersRepository;
+
+    constructor(usersRepository: IUsersRepository) {
+        this._usersRepository = usersRepository;
     }
 
-    async create(newUserCommand: NewUserCommand): Promise<String | User> {
-        return this.usersRepository.store(newUserCommand);
+    async create(newUser: NewUser): Promise<string | User> {
+        try {
+            return await this._usersRepository.store(newUser);
+        } catch (error) {
+            console.log(error);
+            return 'error';
+        }
     }
 }

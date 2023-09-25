@@ -12,7 +12,7 @@
     "noImplicitAny": true,
     "target": "ES6",
     "types": [
-      "node"
+      "jest", "node",
     ]
   },
   "include": [

@@ -22,11 +22,10 @@ describe('UsersController should', () => {
             email: 'raul.test@test.com',
         };
         const response = await appRequest.post('/users').send(newUserRequest);
-
         expect(response.body.id).toBeTruthy();
         expect(response.body.name).toBe(newUserRequest.name);
         expect(response.body.email).toBe(newUserRequest.email);
-        expect(response.body.created).toBeTruthy();
+        expect(response.body.creationDate).toBeTruthy();
         expect(response.status).toBe(201);
     });
 });

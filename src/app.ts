@@ -1,34 +1,57 @@
 import express, { Express, Request, Response } from 'express';
 import * as dotenv from 'dotenv';
 import cors from 'cors';
-import UsersService, { NewUserCommand } from './UsersService';
-import UsersRepository from './usersRepository';
+import UsersService, { NewUser } from './UsersService';
+import InMemoryUsersRepository from './InMemoryUsersRepository';
+import IUsersRepository from './IUsersRepository';
+import IIdProvider from './IIdProvider';
+import UUIDV4IdProvider from './UUIDV4IdProvider';
+import Clock from './Clock';
 
 dotenv.config();
 
 const app: Express = express();
-
-const usersRepository: UsersRepository = new UsersRepository();
+const idProvider: IIdProvider = new UUIDV4IdProvider();
+const clock: Clock = new Clock();
+const usersRepository: IUsersRepository = new InMemoryUsersRepository(idProvider, clock);
 const usersService: UsersService = new UsersService(usersRepository);
+
+interface NewUserDTO {
+    id: string;
+    name: string;
+    email: string;
+    creationDate: string;
+}
 
 app.use(cors()).use(express.json()).options('*', cors());
 
 app.post('/users', async (req: Request, res: Response) => {
-    const newUserRequest: NewUserCommand = req.body;
-    if (!newUserRequest.name || !newUserRequest.email) {
+    const newUser: NewUser = req.body;
+    if (!newUser.name || !newUser.email) {
         res.statusCode = 400;
         return res.send({ message: 'Invalid payload' });
     }
 
-    const result = await usersService.create(newUserRequest);
-    res.send({}).status(201);
+    const result = await usersService.create(newUser);
+    if (typeof result === 'string') {
+        res.send({ message: result }).status(200);
+    } else {
+        const dto = {
+            id: result.id,
+            name: result.name,
+            email: result.email,
+            creationDate: result.creationDate,
+        };
+        res.statusCode = 201;
+        return res.send(dto);
+    }
 });
 app.get('/users', (req: Request, res: Response) => {
     res.send([]).status(200);
 });
 
 const port = process.env.PORT || 3111;
-app.listen(port, () => {
+const server = app.listen(port, () => {
     console.log(`[server]: Server is running at http://localhost:${port}`);
 });
 

@@ -1,34 +1,60 @@
 import { describe, expect, test } from '@jest/globals';
-import UsersService, { NewUserCommand, User } from '../src/UsersService';
-import UsersRepository from '../src/usersRepository';
+import UsersService, { NewUser, User } from '../src/UsersService';
+import InMemoryUsersRepository from '../src/InMemoryUsersRepository';
+import IUsersRepository from '../src/IUsersRepository';
+import IIdProvider from '../src/IIdProvider';
+import Clock from '../src/Clock';
 
 describe('UsersRepository should', () => {
     test('return "error" when cannot store a new user', async () => {
-        const usersRepository: UsersRepository = new UsersRepository();
+        const clock: Clock = {
+            today: (): Date => {
+                return new Date(2023, 8, 25);
+            },
+        };
+        const idProvider: IIdProvider = {
+            generateId: () => {
+                throw Error();
+            },
+        };
+        const usersRepository: IUsersRepository = new InMemoryUsersRepository(idProvider, clock);
 
-        const newUserCommand: NewUserCommand = {
+        const newUser: NewUser = {
             name: 'Raul Mordillo LLuva',
             email: 'raul.test@test.com',
         };
 
-        const result = await usersRepository.store(newUserCommand);
-        expect(result).toBe('error');
+        const result = await usersRepository.store(newUser);
+        expect(result).toBe('error-persisting-user');
     });
 
-    test('return a new user when can store a user', async () => {
-        const usersRepository: UsersRepository = new UsersRepository();
-        const newUserCommand: NewUserCommand = {
+    test('return a new user when can persist it', async () => {
+        const clock: Clock = {
+            today: (): Date => {
+                return new Date(2023, 8, 25);
+            },
+        };
+        const idProvider: IIdProvider = {
+            generateId: () => {
+                return Promise.resolve('12345');
+            },
+        };
+        const usersRepository: InMemoryUsersRepository = new InMemoryUsersRepository(
+            idProvider,
+            clock,
+        );
+        const newUser: NewUser = {
             name: 'Raul Mordillo LLuva',
             email: 'raul.test@test.com',
         };
 
-        const result = await usersRepository.store(newUserCommand);
+        const result = await usersRepository.store(newUser);
 
         const expectedNewUSer = {
             id: '12345',
             name: 'Raul Mordillo LLuva',
             email: 'raul.test@test.com',
-            creationDate: '10/10/2023',
+            creationDate: new Date(2023, 8, 25),
         };
         expect(result).toEqual(expectedNewUSer);
     });
