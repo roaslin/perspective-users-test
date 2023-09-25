@@ -10,7 +10,7 @@ describe('UsersService should', () => {
             store: (newUser: NewUser) => {
                 return Promise.resolve('error-persisting-user');
             },
-            getAll: (created: string) => {
+            getAll: () => {
                 throw new Error('Function not implemented.');
             },
         };
@@ -34,7 +34,7 @@ describe('UsersService should', () => {
                     creationDate: new Date(2023, 8, 25),
                 });
             },
-            getAll: (created: string) => {
+            getAll: () => {
                 throw new Error('Function not implemented.');
             },
         };

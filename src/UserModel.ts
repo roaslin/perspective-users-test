@@ -1,8 +1,8 @@
 export default class UserModel {
-    id: string;
-    name: string;
-    email: string;
-    creationDate: Date;
+    readonly id: string;
+    readonly name: string;
+    readonly email: string;
+    readonly creationDate: Date;
 
     constructor(id: string, name: string, email: string, creationDate: Date) {
         this.id = id;

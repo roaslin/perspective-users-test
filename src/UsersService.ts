@@ -1,14 +1,18 @@
 import IUsersRepository from './IUsersRepository';
 
+export type Id = string;
+export type Name = string;
+export type Email = string;
+
 export interface NewUser {
-    name: string;
-    email: string;
+    name: Name;
+    email: Email;
 }
 
 export interface User {
-    id: string;
-    name: string;
-    email: string;
+    id: Id;
+    name: Name;
+    email: Email;
     creationDate: Date;
 }
 
@@ -30,7 +34,7 @@ export default class UsersService {
 
     async getAll(created = 'desc'): Promise<Array<User>> {
         try {
-            const result = await this._usersRepository.getAll(created);
+            const result = await this._usersRepository.getAll();
 
             if (created === 'desc') {
                 return result.sort(

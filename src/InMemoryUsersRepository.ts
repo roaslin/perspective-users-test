@@ -35,7 +35,19 @@ export default class InMemoryUsersRepository implements IUsersRepository {
         }
     }
 
-    async getAll(created: string): Promise<User[]> {
-        throw new Error('Method not implemented.');
+    async getAll(): Promise<Array<User>> {
+        try {
+            const mappedUsers = this.users.slice().map((userModel) => {
+                return {
+                    id: userModel.id,
+                    name: userModel.name,
+                    email: userModel.email,
+                    creationDate: userModel.creationDate,
+                };
+            });
+            return mappedUsers;
+        } catch (error) {
+            console.log(error);
+        }
     }
 }
