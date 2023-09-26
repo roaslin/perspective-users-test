@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { describe, expect, test } from '@jest/globals';
-import UsersService, { Email, NewUser, User } from '../src/services/UsersService';
+import UsersService, { Email, NewUser } from '../src/services/UsersService';
 import IUsersRepository from '../src/repositories/IUsersRepository';
 import UserModel from '../src/models/UserModel';
 
