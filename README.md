@@ -21,7 +21,7 @@ Feel free to add or change this project as you like.
 ## Decisions
 
 1. Project structure based on layers for such a small project, also valid would've been by feature 'users'
-2. Handling known errors return error messages from methods
-3. Handling unkown errors rethrowing exceptions let express handle those
+2. Handling known errors by returning error messages from methods
+3. Handling unkown errors by rethrowing exceptions let express handle those
 4. I have not included schema validation for user creation POST /users, just checking if those fields exist
 5. Testing from outside-in using stubs and mocks
