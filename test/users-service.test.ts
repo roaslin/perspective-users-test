@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { describe, expect, test } from '@jest/globals';
-import UsersService, { Email, NewUser } from '../src/services/UsersService';
+import UsersService, { CreatedSorting, Email, NewUser } from '../src/services/UsersService';
 import IUsersRepository from '../src/repositories/IUsersRepository';
 import UserModel from '../src/models/UserModel';
 
@@ -104,6 +104,7 @@ describe('UsersService should', () => {
     });
 
     test('return all users ordered by asc', async () => {
+        const created: CreatedSorting = ' asc';
         const usersRepository: IUsersRepository = {
             getAll: () => {
                 return Promise.resolve([
@@ -121,7 +122,7 @@ describe('UsersService should', () => {
         };
         const usersService = new UsersService(usersRepository);
 
-        const result = await usersService.getAll('asc');
+        const result = await usersService.getAll(created);
 
         expect(result[0].name).toBe('Johannes');
         expect(result[1].name).toBe('Karl');

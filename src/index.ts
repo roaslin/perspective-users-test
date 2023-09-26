@@ -1,7 +1,7 @@
 import express, { Express, NextFunction, Request, Response } from 'express';
 import * as dotenv from 'dotenv';
 import cors from 'cors';
-import UsersService, { NewUser } from './services/UsersService';
+import UsersService, { CreatedSorting, NewUser } from './services/UsersService';
 import InMemoryUsersRepository from './repositories/in-memory/InMemoryUsersRepository';
 import IUsersRepository from './repositories/IUsersRepository';
 import IIdProvider from './providers/IIdProvider';
@@ -65,7 +65,7 @@ app.post('/users', async (req: Request, res: Response, next: NextFunction) => {
 });
 
 app.get('/users', async (req: Request, res: Response, next: NextFunction) => {
-    const created = req.query.created as string;
+    const created = req.query.created as CreatedSorting;
     try {
         const result = await usersService.getAll(created);
 
