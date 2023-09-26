@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { describe, expect, test } from '@jest/globals';
-import UsersService, { NewUser, User } from '../src/services/UsersService';
+import UsersService, { Email, NewUser, User } from '../src/services/UsersService';
 import IUsersRepository from '../src/repositories/IUsersRepository';
 import UserModel from '../src/models/UserModel';
 
@@ -12,6 +12,9 @@ describe('UsersService should', () => {
             },
             getAll: () => {
                 throw new Error('Function not implemented.');
+            },
+            findByEmail: (email: Email) => {
+                return Promise.resolve(false);
             },
         };
         const usersService: UsersService = new UsersService(usersRepository);
@@ -37,6 +40,9 @@ describe('UsersService should', () => {
             getAll: () => {
                 throw new Error('Function not implemented.');
             },
+            findByEmail: (email: Email) => {
+                return Promise.resolve(false);
+            },
         };
         jest.spyOn(usersRepository, 'store');
         const usersService: UsersService = new UsersService(usersRepository);
@@ -50,6 +56,28 @@ describe('UsersService should', () => {
         expect(usersRepository.store).toHaveBeenCalledWith(newUser);
     });
 
+    test('return "email-already-exists" message when creating a user with existing email', async () => {
+        const usersRepository: IUsersRepository = {
+            store: (newUser: NewUser) => {
+                throw new Error('Function not implemented.');
+            },
+            getAll: () => {
+                throw new Error('Function not implemented.');
+            },
+            findByEmail: (email: Email) => {
+                return Promise.resolve(true);
+            },
+        };
+        const usersService: UsersService = new UsersService(usersRepository);
+        const newUser = {
+            name: 'Raul Mordillo LLuva',
+            email: 'raul.test@test.com',
+        };
+
+        const result = await usersService.create(newUser);
+        expect(result).toBe('email-already-exists');
+    });
+
     test('return all users ordered by desc by default', async () => {
         const usersRepository: IUsersRepository = {
             getAll: () => {
@@ -60,6 +88,9 @@ describe('UsersService should', () => {
                 ]);
             },
             store: (newUserCommand: NewUser) => {
+                throw new Error('Function not implemented.');
+            },
+            findByEmail: (email: Email) => {
                 throw new Error('Function not implemented.');
             },
         };
@@ -82,6 +113,9 @@ describe('UsersService should', () => {
                 ]);
             },
             store: (newUserCommand: NewUser) => {
+                throw new Error('Function not implemented.');
+            },
+            findByEmail: (email: Email) => {
                 throw new Error('Function not implemented.');
             },
         };

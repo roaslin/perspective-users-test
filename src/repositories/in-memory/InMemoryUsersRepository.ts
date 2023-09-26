@@ -2,7 +2,7 @@ import Clock from '../../shared/Clock';
 import IIdProvider from '../../providers/IIdProvider';
 import IUsersRepository from '../IUsersRepository';
 import UserModel from '../../models/UserModel';
-import { NewUser, User } from '../../services/UsersService';
+import { Email, NewUser, User } from '../../services/UsersService';
 
 export default class InMemoryUsersRepository implements IUsersRepository {
     private idProvider: IIdProvider;
@@ -30,7 +30,7 @@ export default class InMemoryUsersRepository implements IUsersRepository {
                 creationDate: newUserModel.creationDate,
             };
         } catch (error) {
-            console.log(error);
+            console.error(error);
             return 'error-persisting-user';
         }
     }
@@ -47,7 +47,16 @@ export default class InMemoryUsersRepository implements IUsersRepository {
             });
             return mappedUsers;
         } catch (error) {
-            console.log(error);
+            console.error(error);
+            throw error;
+        }
+    }
+
+    async findByEmail(email: Email): Promise<Boolean> {
+        try {
+            return this.users.findIndex((user) => user.email === email) > -1;
+        } catch (error) {
+            console.error(error);
             throw error;
         }
     }

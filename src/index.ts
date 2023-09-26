@@ -6,7 +6,6 @@ import InMemoryUsersRepository from './repositories/in-memory/InMemoryUsersRepos
 import IUsersRepository from './repositories/IUsersRepository';
 import IIdProvider from './providers/IIdProvider';
 import Clock from './shared/Clock';
-import bodyParser from 'body-parser';
 import UUIDV4IdProvider from './providers/UUIDV4IdProvider';
 
 dotenv.config();
@@ -35,12 +34,20 @@ app.post('/users', async (req: Request, res: Response, next: NextFunction) => {
         res.statusCode = 400;
         return res.send({ message: 'Invalid payload' });
     }
-    const newUser: NewUser = { name, email };
 
     try {
+        const newUser: NewUser = { name, email };
         const result = await usersService.create(newUser);
+
         if (typeof result === 'string') {
-            res.send({ message: result }).status(200);
+            if (result === 'error-persisting-user') {
+                res.statusCode = 500;
+                return res.send({ message: 'Unexpected internal server error occurred.' });
+            }
+            if (result === 'email-already-exists') {
+                res.statusCode = 200;
+                return res.send({ message: 'Email already exists' });
+            }
         } else {
             const dto: NewUserDTO = {
                 id: result.id,
@@ -48,6 +55,7 @@ app.post('/users', async (req: Request, res: Response, next: NextFunction) => {
                 email: result.email,
                 creationDate: result.creationDate,
             };
+
             res.statusCode = 201;
             return res.send(dto);
         }
@@ -78,10 +86,12 @@ app.get('/users', async (req: Request, res: Response, next: NextFunction) => {
 
 // ports
 const PORT = process.env.PORT;
+const HOST = process.env.HOST;
 const port = PORT || 3111;
+const host = HOST || 'localhost';
 
 app.listen(port, () => {
-    console.log(`[server]: Server is running at http://localhost:${port}`);
+    console.log(`[server]: Server is running at http://${host}:${port}`);
 });
 
 export default app;

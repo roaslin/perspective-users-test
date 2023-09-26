@@ -29,6 +29,17 @@ describe('POST /users should', () => {
         expect(response.body.creationDate).toBeTruthy();
         expect(response.status).toBe(201);
     });
+
+    test('return 200 when a user email already exists', async () => {
+        const newUserRequest = {
+            name: 'Raul Mordillo Lluva',
+            email: 'raul.test@test.com',
+        };
+        const response = await appRequest.post('/users').send(newUserRequest);
+
+        expect(response.body.message).toBe('Email already exists');
+        expect(response.status).toBe(200);
+    });
 });
 
 describe('GET /users should', () => {

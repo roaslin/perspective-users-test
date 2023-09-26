@@ -25,6 +25,11 @@ export default class UsersService {
 
     async create(newUser: NewUser): Promise<string | User> {
         try {
+            const userExists = await this._usersRepository.findByEmail(newUser.email);
+            if (userExists) {
+                return 'email-already-exists';
+            }
+
             return await this._usersRepository.store(newUser);
         } catch (error) {
             console.log(error);
@@ -48,7 +53,7 @@ export default class UsersService {
                 (a: User, b: User) => a.creationDate.getTime() - b.creationDate.getTime(),
             );
         } catch (error) {
-            console.log(error);
+            console.error(error);
             throw error;
         }
     }

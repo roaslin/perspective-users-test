@@ -76,6 +76,34 @@ describe('UsersRepository should', () => {
 
         expect(result.length).toBe(2);
     });
+
+    test('return true when find user by email', async () => {
+        const clock: Clock = new Clock();
+        const idProvider: IIdProvider = new UUIDV4IdProvider();
+        const usersRepository: InMemoryUsersRepository = new InMemoryUsersRepository(
+            idProvider,
+            clock,
+        );
+        await usersRepository.store(buildUser('Raul', 'raul@test.com'));
+
+        const result = await usersRepository.findByEmail('raul@test.com');
+
+        expect(result).toBe(true);
+    });
+
+    test('return false when does not find user by email', async () => {
+        const clock: Clock = new Clock();
+        const idProvider: IIdProvider = new UUIDV4IdProvider();
+        const usersRepository: InMemoryUsersRepository = new InMemoryUsersRepository(
+            idProvider,
+            clock,
+        );
+        await usersRepository.store(buildUser('Raul', 'raul@test.com'));
+
+        const result = await usersRepository.findByEmail('Karl@test.com');
+
+        expect(result).toBe(false);
+    });
 });
 
 function buildUser(name: string, email: string): UserModel {
