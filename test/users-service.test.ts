@@ -5,7 +5,7 @@ import IUsersRepository from '../src/repositories/IUsersRepository';
 import UserModel from '../src/models/UserModel';
 
 describe('UsersService should', () => {
-    test('return error message when cannot create a new user', async () => {
+    test('return "error-persisting-user" message when cannot create a new user', async () => {
         const usersRepository: IUsersRepository = {
             store: (newUser: NewUser) => {
                 return Promise.resolve('error-persisting-user');
