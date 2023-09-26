@@ -25,3 +25,4 @@ Feel free to add or change this project as you like.
 3. Handling unkown errors by rethrowing exceptions let express handle those
 4. I have not included schema validation for user creation POST /users, just checking if those fields exist
 5. Testing from outside-in using stubs and mocks
+6. GET /users receive a query parameter `created` as per specs, values are `asc` or `desc`. Default value if query parameter not provided is `desc`
