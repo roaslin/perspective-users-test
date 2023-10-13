@@ -1,8 +1,14 @@
 import express, { Express, NextFunction, Request, Response } from 'express';
 import * as dotenv from 'dotenv';
 import cors from 'cors';
-import UsersService, { CreatedSorting, NewUser } from './services/UsersService';
-import InMemoryUsersRepository from './repositories/in-memory/InMemoryUsersRepository';
+import UsersService, {
+    CreatedSorting,
+    EmailAlreadyExistsException,
+    NewUser,
+} from './services/UsersService';
+import InMemoryUsersRepository, {
+    ErrorPersistingUserException,
+} from './repositories/in-memory/InMemoryUsersRepository';
 import IUsersRepository from './repositories/IUsersRepository';
 import IIdProvider from './providers/IIdProvider';
 import Clock from './shared/Clock';
@@ -39,27 +45,21 @@ app.post('/users', async (req: Request, res: Response, next: NextFunction) => {
         const newUser: NewUser = { name, email };
         const result = await usersService.create(newUser);
 
-        if (typeof result === 'string') {
-            if (result === 'error-persisting-user') {
-                res.statusCode = 500;
-                return res.send({ message: 'Unexpected internal server error occurred.' });
-            }
-            if (result === 'email-already-exists') {
-                res.statusCode = 200;
-                return res.send({ message: 'Email already exists' });
-            }
-        } else {
-            const dto: NewUserDTO = {
-                id: result.id,
-                name: result.name,
-                email: result.email,
-                creationDate: result.creationDate,
-            };
+        const dto: NewUserDTO = {
+            id: result.id,
+            name: result.name,
+            email: result.email,
+            creationDate: result.creationDate,
+        };
 
-            res.statusCode = 201;
-            return res.send(dto);
-        }
+        return res.status(201).send(dto);
     } catch (error) {
+        if (error instanceof EmailAlreadyExistsException) {
+            return res.status(200).send({ message: 'Email already exists' });
+        }
+        if (error instanceof ErrorPersistingUserException) {
+            return res.status(500).send({ message: 'Unexpected internal server error occurred.' });
+        }
         next(error);
     }
 });

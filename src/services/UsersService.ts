@@ -24,11 +24,11 @@ export default class UsersService {
         this._usersRepository = usersRepository;
     }
 
-    async create(newUser: NewUser): Promise<string | User> {
+    async create(newUser: NewUser): Promise<User> {
         try {
             const userExists = await this._usersRepository.findByEmail(newUser.email);
             if (userExists) {
-                return 'email-already-exists';
+                throw new EmailAlreadyExistsException('email-already-exists');
             }
 
             return await this._usersRepository.store(newUser);
@@ -57,5 +57,12 @@ export default class UsersService {
             console.error(error);
             throw error;
         }
+    }
+}
+
+export class EmailAlreadyExistsException extends Error {
+    constructor(message: string) {
+        super(message);
+        this.name = 'EmailAlreadyExistsException';
     }
 }

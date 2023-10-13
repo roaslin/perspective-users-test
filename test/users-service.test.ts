@@ -1,9 +1,15 @@
 import { v4 as uuidv4 } from 'uuid';
 import { describe, expect, test } from '@jest/globals';
-import UsersService, { CreatedSorting, Email, NewUser } from '../src/services/UsersService';
+import UsersService, {
+    CreatedSorting,
+    Email,
+    EmailAlreadyExistsException,
+    NewUser,
+} from '../src/services/UsersService';
 import IUsersRepository from '../src/repositories/IUsersRepository';
 import UserModel from '../src/models/UserModel';
 import { ErrorPersistingUserException } from '../src/repositories/in-memory/InMemoryUsersRepository';
+import { getError, NoErrorThrownError } from './utils/tools';
 
 describe('UsersService should', () => {
     test('throw "ErrorPersistingUserException" when cannot create a new user', async () => {
@@ -58,7 +64,7 @@ describe('UsersService should', () => {
         expect(usersRepository.store).toHaveBeenCalledWith(newUser);
     });
 
-    test('return "email-already-exists" message when creating a user with existing email', async () => {
+    test('throw "EmailAlreadyExistsException" message when creating a user with existing email', async () => {
         const usersRepository: IUsersRepository = {
             store: (newUser: NewUser) => {
                 throw new Error('Function not implemented.');
@@ -76,8 +82,13 @@ describe('UsersService should', () => {
             email: 'raul.test@test.com',
         };
 
-        const result = await usersService.create(newUser);
-        expect(result).toBe('email-already-exists');
+        const error: EmailAlreadyExistsException = await getError(
+            async () => await usersService.create(newUser),
+        );
+
+        // check that the returned error wasn't that no error was thrown
+        expect(error).not.toBeInstanceOf(NoErrorThrownError);
+        expect(error).toStrictEqual(new EmailAlreadyExistsException('email-already-exists'));
     });
 
     test('return all users ordered by desc by default', async () => {

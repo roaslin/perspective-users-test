@@ -9,6 +9,8 @@ import IIdProvider from '../src/providers/IIdProvider';
 import Clock from '../src/shared/Clock';
 import UserModel from '../src/models/UserModel';
 import UUIDV4IdProvider from '../src/providers/UUIDV4IdProvider';
+import { getError, NoErrorThrownError } from './utils/tools';
+import e from 'express';
 
 describe('UsersRepository should', () => {
     test('return "error" when cannot store a new user', async () => {
@@ -29,9 +31,13 @@ describe('UsersRepository should', () => {
             email: 'raul.test@test.com',
         };
 
-        expect(async () => {
-            await usersRepository.store(newUser);
-        }).rejects.toThrow(new ErrorPersistingUserException('error-persisting-user'));
+        const error: ErrorPersistingUserException = await getError(
+            async () => await usersRepository.store(newUser),
+        );
+
+        // check that the returned error wasn't that no error was thrown
+        expect(error).not.toBeInstanceOf(NoErrorThrownError);
+        expect(error).toStrictEqual(new ErrorPersistingUserException('error-persisting-user'));
     });
 
     test('return a new user when can store it', async () => {
