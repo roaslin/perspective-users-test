@@ -15,7 +15,7 @@ export default class InMemoryUsersRepository implements IUsersRepository {
         this.users = [];
     }
 
-    async store(newUser: NewUser): Promise<string | User> {
+    async store(newUser: NewUser): Promise<User> {
         try {
             const id = await this.idProvider.generateId();
             const today = this.clock.today();
@@ -31,7 +31,7 @@ export default class InMemoryUsersRepository implements IUsersRepository {
             };
         } catch (error) {
             console.error(error);
-            return 'error-persisting-user';
+            throw new ErrorPersistingUserException('error-persisting-user');
         }
     }
 
@@ -59,5 +59,12 @@ export default class InMemoryUsersRepository implements IUsersRepository {
             console.error(error);
             throw error;
         }
+    }
+}
+
+export class ErrorPersistingUserException extends Error {
+    constructor(message: string) {
+        super(message);
+        this.name = 'ErrorPersistingUserException';
     }
 }

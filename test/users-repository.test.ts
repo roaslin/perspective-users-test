@@ -1,7 +1,9 @@
 import { v4 as uuidv4 } from 'uuid';
 import { describe, expect, test } from '@jest/globals';
 import { NewUser } from '../src/services/UsersService';
-import InMemoryUsersRepository from '../src/repositories/in-memory/InMemoryUsersRepository';
+import InMemoryUsersRepository, {
+    ErrorPersistingUserException,
+} from '../src/repositories/in-memory/InMemoryUsersRepository';
 import IUsersRepository from '../src/repositories/IUsersRepository';
 import IIdProvider from '../src/providers/IIdProvider';
 import Clock from '../src/shared/Clock';
@@ -27,8 +29,9 @@ describe('UsersRepository should', () => {
             email: 'raul.test@test.com',
         };
 
-        const result = await usersRepository.store(newUser);
-        expect(result).toBe('error-persisting-user');
+        expect(async () => {
+            await usersRepository.store(newUser);
+        }).rejects.toThrow(new ErrorPersistingUserException('error-persisting-user'));
     });
 
     test('return a new user when can store it', async () => {
