@@ -3,12 +3,13 @@ import { describe, expect, test } from '@jest/globals';
 import UsersService, { CreatedSorting, Email, NewUser } from '../src/services/UsersService';
 import IUsersRepository from '../src/repositories/IUsersRepository';
 import UserModel from '../src/models/UserModel';
+import { ErrorPersistingUserException } from '../src/repositories/in-memory/InMemoryUsersRepository';
 
 describe('UsersService should', () => {
-    test('return "error-persisting-user" message when cannot create a new user', async () => {
+    test('throw "ErrorPersistingUserException" when cannot create a new user', async () => {
         const usersRepository: IUsersRepository = {
             store: (newUser: NewUser) => {
-                return Promise.resolve('error-persisting-user');
+                throw new ErrorPersistingUserException('error-persisting-user');
             },
             getAll: () => {
                 throw new Error('Function not implemented.');
@@ -23,8 +24,9 @@ describe('UsersService should', () => {
             email: 'raul.test@test.com',
         };
 
-        const result = await usersService.create(newUser);
-        expect(result).toBe('error-persisting-user');
+        expect(async () => {
+            await usersService.create(newUser);
+        }).rejects.toThrow(new ErrorPersistingUserException('error-persisting-user'));
     });
 
     test('create a new user', async () => {
